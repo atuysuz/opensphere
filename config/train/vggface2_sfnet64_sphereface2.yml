@@ -10,8 +10,7 @@ project:
   val_log:
     path: val.log
     screen_intvl: 1
-    headers: {LFW: ':3.3f', AgeDB-30: ':3.3f', CA-LFW: ':3.3f',
-      CP-LFW: ':3.3f'}
+    headers: {LFW: ':3.3f'}
   val_intvl: 2000
   save_iters: [66000, 67000, 68000, 69000, 70000]
 data:
@@ -35,21 +34,6 @@ data:
   - dataset:
       name: LFW
       ann_path: data/val/lfw_ann.txt
-      metrics:
-      - ACC
-  - dataset:
-      name: AgeDB-30
-      ann_path: data/val/agedb_30_ann.txt
-      metrics:
-      - ACC
-  - dataset:
-      name: CA-LFW
-      ann_path: data/val/calfw_ann.txt
-      metrics:
-      - ACC
-  - dataset:
-      name: CP-LFW
-      ann_path: data/val/cplfw_ann.txt
       metrics:
       - ACC
 parallel:
