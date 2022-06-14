@@ -12,7 +12,7 @@ project:
     screen_intvl: 1
     headers: {LFW: ':3.3f'}
   val_intvl: 2000
-  save_iters: [66000, 67000, 68000, 69000, 70000]
+  save_iters: [66000, 67000, 68000, 69000, 70000, 80000, 90000, 100000, 120000, 140000]
 data:
   base:
     dataset:
