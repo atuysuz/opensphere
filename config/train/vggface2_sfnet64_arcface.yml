@@ -12,7 +12,7 @@ project:
     screen_intvl: 1
     headers: {LFW: ':3.3f'}
   val_intvl: 2000
-  save_iters: [66000, 67000, 68000, 69000, 70000, 80000, 90000, 100000, 120000, 140000]
+  save_iters: [20000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 120000, 140000]
 data:
   base:
     dataset:
@@ -46,7 +46,7 @@ model:
     optimizer: {type: SGD, lr: 0.1, momentum: 0.9, weight_decay: 0.0005}
     scheduler:
       type: MultiStepLR
-      milestones: [40000, 60000, 70000, 80000, 90000, 100000, 120000, 140000]
+      milestones: [30000, 50000, 70000, 90000, 100000, 120000, 140000]
       gamma: 0.1
   backbone:
     net:
@@ -56,10 +56,6 @@ model:
       out_channel: 512
   head:
     net:
-      type: SphereFace2
-      magn_type: C
-      alpha: 0.7
-      r: 40
-      m: 0.4
-      t: 3.0
-      lw: 10.
+      type: ArcFace
+      m: 0.5
+      s: 64

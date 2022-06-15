@@ -11,6 +11,7 @@ from datetime import datetime
 from runner import IterRunner
 from utils import fill_config
 from builder import build_dataloader, build_model
+import subprocess
 
 
 def parse_args():
@@ -55,6 +56,10 @@ def main_worker(rank, world_size, config):
     # clean up
     dist.destroy_process_group()
 
+    # Copy model and logs to the persistent storage:
+    print(runner.proj_dir)
+    subprocess.call(['sh', './copy_data_post_train.sh {}'.format(runner.proj_dir)])
+
 
 if __name__ == '__main__':
     # get arguments and config
@@ -77,7 +82,7 @@ if __name__ == '__main__':
         config['parallel']['world_size'] = world_size
 
     if args.proj_dir:
-        config['project']['proj_dir'] = arg.proj_dir
+        config['project']['proj_dir'] = args.proj_dir
 
     if args.start_time:
         yy, mm, dd, h, m, s = args.start_time.split('-')

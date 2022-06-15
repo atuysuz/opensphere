@@ -49,6 +49,7 @@ class IterRunner():
         print('')
         print('The training log and models are saved to ' + proj_dir)
         print('')
+        self.proj_dir = proj_dir
 
         # model directory
         self.model_dir = osp.join(proj_dir, proj_cfg['model_dir'])
