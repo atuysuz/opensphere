@@ -57,8 +57,9 @@ def main_worker(rank, world_size, config):
     dist.destroy_process_group()
 
     # Copy model and logs to the persistent storage:
-    print(runner.proj_dir)
-    subprocess.call(['sh', './copy_data_post_train.sh {}'.format(runner.proj_dir)])
+    if rank == 0:
+        print(runner.proj_dir)
+        subprocess.check_call(['./copy_data_post_train.sh', runner.proj_dir])
 
 
 if __name__ == '__main__':

@@ -1,13 +1,12 @@
 import random
 import numpy as np
 import cv2
-
+import albumentations as A
 from PIL import Image
 from skimage import transform
 from sklearn import metrics
 from scipy.optimize import brentq
 from scipy.interpolate import interp1d
-
 
 
 def image_pipeline(info, test_mode):
@@ -28,6 +27,11 @@ def image_pipeline(info, test_mode):
         tform.estimate(tgz_landmark, src_landmark)
         M = tform.params[0:2, :]
         image = cv2.warpAffine(image, M, crop_size, borderValue=0.0)
+
+    album_transform = A.Compose([A.Cutout(num_holes=8, max_h_size=8, max_w_size=8, fill_value=0,
+                                          always_apply=False, p=0.5)])
+
+    image = album_transform(image)["image"]
 
     # normalize to [-1, 1]
     image = ((image - 127.5) / 127.5)
