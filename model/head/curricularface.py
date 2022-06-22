@@ -51,4 +51,7 @@ class CurricularFace(nn.Module):
         cos_theta[mask] = hard_example * (self.t + hard_example)
         cos_theta.scatter_(1, label.view(-1, 1).long(), final_target_logit)
         output = cos_theta * self.s
-        return output, origin_cos * self.s
+
+        loss = F.cross_entropy(output, label)
+
+        return loss
