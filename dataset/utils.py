@@ -28,10 +28,11 @@ def image_pipeline(info, test_mode):
         M = tform.params[0:2, :]
         image = cv2.warpAffine(image, M, crop_size, borderValue=0.0)
 
-    album_transform = A.Compose([A.Cutout(num_holes=8, max_h_size=8, max_w_size=8, fill_value=0,
-                                          always_apply=False, p=0.5)])
-
-    image = album_transform(image)["image"]
+    if not test_mode:
+        album_transform = A.Compose([A.CoarseDropout(max_holes=8, max_height=8, max_width=8, min_holes=None,
+                                                     min_height=None, min_width=None, fill_value=0, always_apply=False,
+                                                     p=0.5)])
+        image = album_transform(image=image)["image"]
 
     # normalize to [-1, 1]
     image = ((image - 127.5) / 127.5)

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-if [ ! -d "$BASE_PATH"/facerec_data ]; then
+if [ ! -d "$BASE_PATH"/opensphere/data ]; then
 
   DATA_PATH_TRAIN="$BASE_PATH"/opensphere/data/train
   DATA_PATH_VAL="$BASE_PATH"/opensphere/data/val
