@@ -8,6 +8,7 @@ import math
 from torch.nn import Linear, Conv2d, BatchNorm1d, BatchNorm2d, PReLU, ReLU, Sigmoid, Dropout, MaxPool2d, \
     AdaptiveAvgPool2d, Sequential, Module
 
+
 def l2_norm(input, axis=1):
     norm = torch.norm(input, 2, axis, True)
     output = torch.div(input, norm)
@@ -16,17 +17,17 @@ def l2_norm(input, axis=1):
 
 
 class CurricularFace(nn.Module):
-    def __init__(self, in_features, out_features, m=0.5, s=64.):
+    def __init__(self, feat_dim, num_class, m=0.5, s=64.):
         super(CurricularFace, self).__init__()
-        self.in_features = in_features
-        self.out_features = out_features
+        self.in_features = feat_dim
+        self.out_features = num_class
         self.m = m
         self.s = s
         self.cos_m = math.cos(m)
         self.sin_m = math.sin(m)
         self.threshold = math.cos(math.pi - m)
         self.mm = math.sin(math.pi - m) * m
-        self.kernel = Parameter(torch.Tensor(in_features, out_features))
+        self.kernel = Parameter(torch.Tensor(feat_dim, num_class))
         self.register_buffer('t', torch.zeros(1))
         nn.init.normal_(self.kernel, std=0.01)
 
