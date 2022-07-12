@@ -1,11 +1,26 @@
 import glob
 import os
+import pandas as pd
 
 if __name__ == "__main__":
 
     jpg_files = glob.glob('./data/train/mutombo_cropped_aligned_margin_40/*/*.jpg')
-    jpg_files_processed = [os.path.join(*item.split(os.sep)[3:]) + " " + item.split(os.sep)[4] + "\n" for item in jpg_files]
+    jpg_files_processed = [(os.path.join(*item.split(os.sep)[3:]), item.split(os.sep)[4]) for item in
+                           jpg_files]
 
-    mutombo_train_file = './data/train/mutombo_train_file.txt'
-    with open(mutombo_train_file, 'w') as fp:
-        fp.writelines(jpg_files_processed)
+    jpg_files_processed_paths = [item[0] for item in jpg_files_processed]
+    jpg_files_processed_id = [item[1] for item in jpg_files_processed]
+
+    df_files = pd.DataFrame({'filePath': jpg_files_processed_paths, 'id': jpg_files_processed_id})
+    df_files_grouped = df_files.groupby(["id"])["filePath"].count().to_frame("numPhotos")
+
+    photo_thresholds = [20, 30, 50]
+
+    for thresh in photo_thresholds:
+        df_files_grouped_thresholded = df_files_grouped[df_files_grouped["numPhotos"] >= thresh]
+        df_files_thresholded = df_files.merge(df_files_grouped_thresholded, left_on="id", right_index=True, how="inner")
+        mutombo_train_file = os.path.join('./data/train/mutombo_train_file_{}.txt'.format(thresh))
+        df_files_thresholded.to_csv(mutombo_train_file)
+
+
+

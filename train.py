@@ -46,7 +46,7 @@ def main_worker(rank, world_size, config):
     num_class = len(train_loader.dataset.classes)
     config['model']['head']['net']['num_class'] = num_class
     model = build_model(config['model'])
-    if rank==0:
+    if rank == 0:
         print(model)
 
     # init runner and run

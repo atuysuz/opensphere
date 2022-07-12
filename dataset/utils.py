@@ -29,7 +29,8 @@ def image_pipeline(info, test_mode):
         image = cv2.warpAffine(image, M, crop_size, borderValue=0.0)
 
     if not test_mode:
-        album_transform = A.Compose([A.CoarseDropout(max_holes=8, max_height=8, max_width=8, min_holes=None,
+        album_transform = A.Compose([A.Resize(112, 112),
+                                     A.CoarseDropout(max_holes=8, max_height=8, max_width=8, min_holes=None,
                                                      min_height=None, min_width=None, fill_value=0, always_apply=False,
                                                      p=0.5)])
         image = album_transform(image=image)["image"]
