@@ -12,6 +12,11 @@ if __name__ == "__main__":
     jpg_files_processed_id = [item[1] for item in jpg_files_processed]
 
     df_files = pd.DataFrame({'filePath': jpg_files_processed_paths, 'id': jpg_files_processed_id})
+
+    mutombo_train_file = os.path.join('./data/train/mutombo_train_file.txt')
+    print('Number of files after w/o thresholding = {}'.format(len(df_files)))
+    df_files[["filePath", "id"]].to_csv(mutombo_train_file, sep=" ", header=False, index=False)
+
     df_files_grouped = df_files.groupby(["id"])["filePath"].count().to_frame("numPhotos")
 
     photo_thresholds = [20, 30, 50]
@@ -20,7 +25,8 @@ if __name__ == "__main__":
         df_files_grouped_thresholded = df_files_grouped[df_files_grouped["numPhotos"] >= thresh]
         df_files_thresholded = df_files.merge(df_files_grouped_thresholded, left_on="id", right_index=True, how="inner")
         mutombo_train_file = os.path.join('./data/train/mutombo_train_file_{}.txt'.format(thresh))
-        df_files_thresholded.to_csv(mutombo_train_file)
+        print('Number of files after thresholding with {} = {}'.format(thresh, len(df_files_thresholded)))
+        df_files_thresholded[["filePath", "id"]].to_csv(mutombo_train_file, sep=" ", header=False, index=False)
 
 
 
