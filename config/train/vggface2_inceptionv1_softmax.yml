@@ -10,8 +10,7 @@ project:
   val_log:
     path: val.log
     screen_intvl: 1
-    headers: {LFW: ':3.3f', AgeDB-30: ':3.3f', CA-LFW: ':3.3f',
-      CP-LFW: ':3.3f'}
+    headers: {LFW: ':3.3f'}
   val_intvl: 2000
   save_iters: [20000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 120000, 140000]
 data:
@@ -52,6 +51,7 @@ model:
   backbone:
     net:
       type: InceptionResnetV1
+      out_channel: 512
   head:
     net:
       type: SoftmaxLoss

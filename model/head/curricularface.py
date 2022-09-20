@@ -32,9 +32,11 @@ class CurricularFace(nn.Module):
         nn.init.normal_(self.kernel, std=0.01)
 
     def forward(self, embbedings, label):
-        embbedings = l2_norm(embbedings, axis=1)
-        kernel_norm = l2_norm(self.kernel, axis=0)
-        cos_theta = torch.mm(embbedings, kernel_norm)
+
+        with torch.no_grad():
+            self.kernel.data = F.normalize(self.kernel.data, dim=0)
+
+        cos_theta = F.normalize(embbedings, dim=1).mm(self.w)
         cos_theta = cos_theta.clamp(-1, 1)  # for numerical stability
         with torch.no_grad():
             origin_cos = cos_theta.clone()
@@ -48,6 +50,7 @@ class CurricularFace(nn.Module):
         hard_example = cos_theta[mask]
         with torch.no_grad():
             self.t = target_logit.mean() * 0.01 + (1 - 0.01) * self.t
+
         cos_theta[mask] = hard_example * (self.t + hard_example)
         cos_theta.scatter_(1, label.view(-1, 1).long(), final_target_logit)
         output = cos_theta * self.s

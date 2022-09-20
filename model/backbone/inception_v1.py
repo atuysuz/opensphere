@@ -191,9 +191,10 @@ class InceptionResnetV1(nn.Module):
             initialized. (default: {None})
         dropout_prob {float} -- Dropout probability. (default: {0.6})
     """
-    def __init__(self, dropout_prob=0.6):
+    def __init__(self, out_channel, dropout_prob=0.6):
         super().__init__()
         # Define layers
+        self.out_channel = out_channel
         self.conv2d_1a = BasicConv2d(3, 32, kernel_size=3, stride=2)
         self.conv2d_2a = BasicConv2d(32, 32, kernel_size=3, stride=1)
         self.conv2d_2b = BasicConv2d(32, 64, kernel_size=3, stride=1, padding=1)

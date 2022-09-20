@@ -26,8 +26,8 @@ data:
     dataset:
       type: ClassDataset
       name: VGGFace2
-      data_dir: data/train/
-      ann_path: data/train/mutombo_train_file.txt
+      data_dir: /mnt/share/deeplearning_uface-face-detection/datasets/mutombo_ninem
+      ann_path: /mnt/share/deeplearning_uface-face-detection/datasets/mutombo_ninem/mutombo_train_file.txt
       test_mode: false
     dataloader: {batch_size: 512, shuffle: true, drop_last: true}
   val:
