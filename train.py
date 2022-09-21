@@ -13,6 +13,7 @@ from utils import fill_config
 from builder import build_dataloader, build_model
 import subprocess
 
+os.environ["CUDA_VISIBLE_DEVICES"] = '0,1,2,3'
 
 def parse_args():
     parser = argparse.ArgumentParser(
