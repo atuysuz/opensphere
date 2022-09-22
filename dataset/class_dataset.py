@@ -1,5 +1,6 @@
 import random
 import os.path as osp
+import numpy as np
 
 from .utils import image_pipeline
 from torch.utils.data import Dataset
@@ -26,51 +27,56 @@ class ClassDataset(Dataset):
         with open(self.ann_path, 'r') as f:
             lines = f.readlines()
 
-        self.data_items = []
-        for line in lines:
-            path, name= line.rstrip().split()
-            item = {'path': path, 'name': name}
-            self.data_items.append(item)
+        self.data_path_list = []
+        self.data_label_list = []
 
-        if len(self.data_items) == 0:
+        for line in lines:
+            path, name = line.rstrip().split()
+            self.data_path_list.append(path)
+            self.data_label_list.append(name)
+
+        if len(self.data_path_list) == 0:
             raise (RuntimeError('Found 0 files.'))
+
+        self.data_path = np.array(self.data_path_list).astype(np.string_)
 
     def corrupt_label(self):
         random.seed(self.seed)
-        labels = list({item['label'] for item in self.label_items})
-        for item in self.label_items:
+        for idx, item in enumerate(self.label_items):
             if random.random() > self.noise_ratio:
                 continue
-            item['label'] = random.choice(labels)
+            self.label_items[idx] = np.random.choice(self.label_items)
 
     def get_label(self):
         """ convert name to label,
             and optionally permutate some labels
         """
-        names = {item['name'] for item in self.data_items}
-        names = sorted(list(names))
+        names = self.data_label_list.copy()
+        names.sort()
         self.classes = names
         name2label = {name: idx for idx, name in enumerate(names)}
 
-        self.label_items = []
-        for item in self.data_items:
-            label = name2label[item['name']]
-            self.label_items.append({'label': label})
+        self.label_items_list = []
+        for item in self.data_label_list:
+            label = name2label[item]
+            self.label_items_list.append(label)
+
+        self.label_items = np.array(self.label_items_list).astype(np.string_)
 
         if self.noise_ratio:
             self.corrupt_label()
 
     def prepare(self, idx):
         # load image and pre-process (pipeline)
-        path = self.data_items[idx]['path']
+        path = self.data_path[idx]
         item = {'path': osp.join(self.data_dir, path)}
         image = image_pipeline(item, self.test_mode)
-        label = self.label_items[idx]['label']
+        label = self.label_items[idx]
 
         return image, label
 
     def __len__(self):
-        return len(self.data_items)
+        return len(self.data_path)
 
     def __getitem__(self, idx):
         return self.prepare(idx)

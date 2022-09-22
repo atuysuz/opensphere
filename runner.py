@@ -153,6 +153,7 @@ class IterRunner():
             }
             self.train_buffer.update(msg)
 
+        torch.cuda.empty_cache()
     @torch.no_grad()
     def val(self):
         # switch to test mode
