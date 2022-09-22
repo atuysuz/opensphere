@@ -51,9 +51,10 @@ class ClassDataset(Dataset):
         """ convert name to label,
             and optionally permutate some labels
         """
-        names = self.data_label_list.copy()
-        names.sort()
+        names = set(self.data_label_list)
+        names = sorted(list(names))
         self.classes = names
+
         name2label = {name: idx for idx, name in enumerate(names)}
 
         self.label_items_list = []
