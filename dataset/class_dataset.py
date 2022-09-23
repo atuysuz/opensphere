@@ -62,14 +62,14 @@ class ClassDataset(Dataset):
             label = name2label[item]
             self.label_items_list.append(label)
 
-        self.label_items = np.array(self.label_items_list).astype(np.string_)
+        self.label_items = np.array(self.label_items_list)
 
         if self.noise_ratio:
             self.corrupt_label()
 
     def prepare(self, idx):
         # load image and pre-process (pipeline)
-        path = self.data_path[idx]
+        path = self.data_path[idx].decode('UTF-8')
         item = {'path': osp.join(self.data_dir, path)}
         image = image_pipeline(item, self.test_mode)
         label = self.label_items[idx]
