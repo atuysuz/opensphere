@@ -1,5 +1,5 @@
 project:
-  proj_dir: project/
+  proj_dir: /mnt/share/deeplearning_uface-face-detection/facerec/ninem_models/
   model_dir: models/
   cfg_fname: config.yml
   train_log:
@@ -12,7 +12,7 @@ project:
     screen_intvl: 1
     headers: {LFW: ':3.3f'}
   val_intvl: 2000
-  save_iters: [20000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 120000, 140000]
+  save_iters: [40000,  80000, 100000, 130000, 170000, 210000, 260000, 280000]
 data:
   base:
     dataset:
@@ -29,7 +29,7 @@ data:
       data_dir: /mnt/share/deeplearning_uface-face-detection/datasets/mutombo_ninem
       ann_path: /mnt/share/deeplearning_uface-face-detection/datasets/mutombo_ninem/mutombo_train_file.txt
       test_mode: false
-    dataloader: {batch_size: 1024, shuffle: true, drop_last: true, num_workers: 2, pin_memory: true}
+    dataloader: {batch_size: 512, shuffle: true, drop_last: true, num_workers: 4, pin_memory: true}
   val:
   - dataset:
       name: LFW
@@ -46,11 +46,11 @@ model:
     optimizer: {type: SGD, lr: 0.1, momentum: 0.9, weight_decay: 0.0005}
     scheduler:
       type: MultiStepLR
-      milestones: [30000, 50000, 70000, 90000, 100000, 120000, 140000]
+      milestones: [70000, 120000, 160000, 200000, 240000, 280000]
       gamma: 0.1
   backbone:
     net:
-      type: sfnet64_deprecated
+      type: sfnet64
       in_channel: 3
       channels: [64, 128, 256, 512]
       out_channel: 512
