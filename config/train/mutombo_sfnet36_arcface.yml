@@ -50,7 +50,9 @@ model:
       gamma: 0.1
   backbone:
     net:
-      type: InceptionResnetV1
+      type: sfnet36
+      in_channel: 3
+      channels: [64, 128, 256, 512]
       out_channel: 512
   head:
     net:
