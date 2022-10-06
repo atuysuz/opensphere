@@ -27,19 +27,18 @@ class CurricularFace(nn.Module):
         self.sin_m = math.sin(m)
         self.threshold = math.cos(math.pi - m)
         self.mm = math.sin(math.pi - m) * m
-        self.kernel = Parameter(torch.Tensor(feat_dim, num_class))
+        self.w = Parameter(torch.Tensor(feat_dim, num_class))
         self.register_buffer('t', torch.zeros(1))
-        nn.init.normal_(self.kernel, std=0.01)
+        nn.init.normal_(self.w, std=0.01)
 
     def forward(self, embbedings, label):
 
         with torch.no_grad():
-            self.kernel.data = F.normalize(self.kernel.data, dim=0)
+            self.w.data = F.normalize(self.w.data, dim=0)
 
         cos_theta = F.normalize(embbedings, dim=1).mm(self.w)
         cos_theta = cos_theta.clamp(-1, 1)  # for numerical stability
-        with torch.no_grad():
-            origin_cos = cos_theta.clone()
+
         target_logit = cos_theta[torch.arange(0, embbedings.size(0)), label].view(-1, 1)
 
         sin_theta = torch.sqrt(1.0 - torch.pow(target_logit, 2))
