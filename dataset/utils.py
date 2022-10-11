@@ -7,16 +7,19 @@ from skimage import transform
 from sklearn import metrics
 from scipy.optimize import brentq
 from scipy.interpolate import interp1d
+import torchvision.transforms as T
 
 
 def image_pipeline(info, test_mode):
     path = info['path']
-    #image = Image.open(path).convert('RGB')
-    image = cv2.imread(path)
+    image = Image.open(path)
+
+    #image = cv2.imread(path)
     if image is None:
         raise OSError('{} is not found'.format(path))
-    image = np.array(image)
-    image = image[:, :, ::-1]
+    # If you read with cv2 you need to convert from BGR to RGB space.
+    #image = np.array(image)
+    #image = image[:, :, ::-1]
 
     # align the face image if the source and target landmarks are given
     src_landmark = info.get('src_landmark')
@@ -29,17 +32,26 @@ def image_pipeline(info, test_mode):
         image = cv2.warpAffine(image, M, crop_size, borderValue=0.0)
 
     if not test_mode:
-        album_transform = A.Compose([A.Resize(112, 112),
-                                     A.RandomBrightnessContrast(brightness_limit=0.6, contrast_limit=0.6, p=0.5),
-                                     A.CoarseDropout(max_holes=8, max_height=8, max_width=8, min_holes=None,
+        if random.random() > 0.5:
+            torch_transforms = T.Compose([T.Resize(size=[112, 112]),
+                                          T.ColorJitter(contrast=0.8, brightness=0.8)])
+        else:
+            torch_transforms = T.Compose([T.Resize([112, 112])])
+
+        # We are still in PIL land:
+        image = torch_transforms(image)
+
+        album_transform = A.Compose([A.CoarseDropout(max_holes=8, max_height=8, max_width=8, min_holes=None,
                                                      min_height=None, min_width=None, fill_value=0, always_apply=False,
                                                      p=0.5)])
-        image = album_transform(image=image)["image"]
+        # Convert from PIL to numpy:
+        image = album_transform(image=np.array(image))["image"]
 
     # normalize to [-1, 1]
     # image = ((image - 127.5) / 127.5)
     image = (image-image.min())/(image.max()-image.min())
     image = (image*2)-1
+    # This is need to deal to convert the numpy array to Pytorch tensor where channel is first:
     image = np.transpose(image, (2, 0, 1)).astype(np.float32)
     if not test_mode and random.random() > 0.5:
         image = np.flip(image, axis=2).copy()
