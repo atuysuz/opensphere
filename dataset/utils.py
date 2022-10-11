@@ -12,10 +12,10 @@ import torchvision.transforms as T
 
 def image_pipeline(info, test_mode):
     path = info['path']
-    image = Image.open(path)
+    image_raw = Image.open(path)
 
     #image = cv2.imread(path)
-    if image is None:
+    if image_raw is None:
         raise OSError('{} is not found'.format(path))
     # If you read with cv2 you need to convert from BGR to RGB space.
     #image = np.array(image)
@@ -29,17 +29,23 @@ def image_pipeline(info, test_mode):
         tform = transform.SimilarityTransform()
         tform.estimate(tgz_landmark, src_landmark)
         M = tform.params[0:2, :]
-        image = cv2.warpAffine(image, M, crop_size, borderValue=0.0)
+        image = cv2.warpAffine(image_raw, M, crop_size, borderValue=0.0)
 
     if not test_mode:
         if random.random() > 0.5:
             torch_transforms = T.Compose([T.Resize(size=[112, 112]),
                                           T.ColorJitter(contrast=0.8, brightness=0.8)])
+
         else:
             torch_transforms = T.Compose([T.Resize([112, 112])])
 
         # We are still in PIL land:
-        image = torch_transforms(image)
+        while True:
+            image = torch_transforms(image_raw)
+            min_val = min([item[0] for item in image.getextrema()])
+            max_val = max([item[1] for item in image.getextrema()])
+            if min_val != max_val:
+                break
 
         album_transform = A.Compose([A.CoarseDropout(max_holes=8, max_height=8, max_width=8, min_holes=None,
                                                      min_height=None, min_width=None, fill_value=0, always_apply=False,
