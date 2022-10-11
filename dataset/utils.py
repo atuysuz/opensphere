@@ -37,7 +37,9 @@ def image_pipeline(info, test_mode):
         image = album_transform(image=image)["image"]
 
     # normalize to [-1, 1]
-    image = ((image - 127.5) / 127.5)
+    # image = ((image - 127.5) / 127.5)
+    image = (image-image.min())/(image.max()-image.min())
+    image = (image*2)-1
     image = np.transpose(image, (2, 0, 1)).astype(np.float32)
     if not test_mode and random.random() > 0.5:
         image = np.flip(image, axis=2).copy()
