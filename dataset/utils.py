@@ -48,16 +48,16 @@ def image_pipeline(info, test_mode):
     #         if min_val != max_val:
     #             break
 
-        album_transform = A.Compose([A.Resize(112, 112),
+    album_transform = A.Compose([A.Resize(112, 112),
                                      A.CoarseDropout(max_holes=8, max_height=8, max_width=8, min_holes=None,
                                                      min_height=None, min_width=None, fill_value=0, always_apply=False,
                                                      p=0.5)])
-        # Convert from PIL to numpy:
-        image = album_transform(image=np.array(image))["image"]
+    # Convert from PIL to numpy:
+    image = album_transform(image=np.array(image))["image"]
 
     # normalize to [-1, 1]
     # image = ((image - 127.5) / 127.5)
-    image = (image-image.min())/(image.max()-image.min())
+    image = (image - image.min(axis=(1, 2))) / (image.max(axis=(1, 2)) - image.min(axis=(1, 2)))
     image = (image*2)-1
     # This is need to deal to convert the numpy array to Pytorch tensor where channel is first:
     image = np.transpose(image, (2, 0, 1)).astype(np.float32)
