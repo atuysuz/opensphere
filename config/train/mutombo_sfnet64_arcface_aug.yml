@@ -1,0 +1,61 @@
+project:
+  proj_dir: /mnt/share/deeplearning_uface-face-detection/facerec/ninem_models/
+  model_dir: models/
+  cfg_fname: config.yml
+  train_log:
+    path: train.log
+    screen_intvl: 200
+    headers: {Loss: ':3.4f', bkb_grad: ':3.2f', head_grad: ':3.2f',
+      Mag_mean: ':3.2f', Mag_std: ':3.2f'}
+  val_log:
+    path: val.log
+    screen_intvl: 1
+    headers: {LFW: ':3.3f'}
+  val_intvl: 2000
+  save_iters: [80000, 100000, 160000, 200000, 250000, 290000, 320000]
+data:
+  base:
+    dataset:
+      type: PairDataset
+      data_dir: data/val/
+      test_mode: true
+    dataloader: {type: DataLoader, batch_size: 64,
+      shuffle: false, drop_last: false, num_workers: 1,
+      pin_memory: true}
+  train:
+    dataset:
+      type: ClassDataset
+      name: VGGFace2
+      data_dir: /mnt/share/deeplearning_uface-face-detection/datasets/mutombo_ninem
+      ann_path: /mnt/share/deeplearning_uface-face-detection/datasets/mutombo_ninem/mutombo_train_file.txt
+      test_mode: false
+    dataloader: {batch_size: 512, shuffle: true, drop_last: true, num_workers: 4, pin_memory: true}
+  val:
+  - dataset:
+      name: LFW
+      ann_path: data/val/lfw_ann.txt
+      metrics:
+      - ACC
+parallel:
+  backend: nccl
+  dist_url: tcp://127.0.0.1:21119
+  device_ids: [0, 1, 2, 3]
+model:
+  base:
+    net: {}
+    optimizer: {type: SGD, lr: 0.1, momentum: 0.9, weight_decay: 0.0005}
+    scheduler:
+      type: MultiStepLR
+      milestones: [100000, 160000, 210000, 260000, 290000, 320000]
+      gamma: 0.1
+  backbone:
+    net:
+      type: sfnet64
+      in_channel: 3
+      channels: [64, 128, 256, 512]
+      out_channel: 512
+  head:
+    net:
+      type: ArcFace
+      m: 0.5
+      s: 64
