@@ -52,10 +52,10 @@ model:
     net:
       type: sfnet64
       in_channel: 3
-      channels: [64, 128, 256, 512]
-      out_channel: 512
+      channels: [64, 128, 128, 128]
+      out_channel: 128
   head:
     net:
       type: ArcFace
       m: 0.5
-      s: 64
+      s: 16
