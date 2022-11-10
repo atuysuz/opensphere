@@ -62,7 +62,7 @@ class PairDataset(Dataset):
         # load image and pre-process (pipeline) from path
         path = self.data_items[idx]['path']
         item = {'path': osp.join(self.data_dir, path)}
-        image = image_pipeline(item, self.test_mode)
+        image = image_pipeline(item, self.test_mode, augment=False)
 
         return image, idx
 
