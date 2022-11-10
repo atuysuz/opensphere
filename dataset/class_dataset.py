@@ -8,13 +8,14 @@ from torch.utils.data import Dataset
 
 class ClassDataset(Dataset):
     def __init__(self, name, data_dir, ann_path,
-            test_mode=False, noise_ratio=None, seed=None):
+            test_mode=False, augment=False, noise_ratio=None, seed=None):
         super().__init__()
 
         self.name = name
         self.data_dir = data_dir
         self.ann_path = ann_path
         self.test_mode = test_mode
+        self.augment = augment
         self.noise_ratio = noise_ratio
         self.seed = seed
 
@@ -71,7 +72,7 @@ class ClassDataset(Dataset):
         # load image and pre-process (pipeline)
         path = self.data_path[idx].decode('UTF-8')
         item = {'path': osp.join(self.data_dir, path)}
-        image = image_pipeline(item, self.test_mode)
+        image = image_pipeline(item, self.test_mode, self.augment)
         label = self.label_items[idx]
 
         return image, label

@@ -29,6 +29,7 @@ data:
       data_dir: /mnt/share/deeplearning_uface-face-detection/datasets/mutombo_ninem
       ann_path: /mnt/share/deeplearning_uface-face-detection/datasets/mutombo_ninem/mutombo_train_file.txt
       test_mode: false
+      augment: false
     dataloader: {batch_size: 512, shuffle: true, drop_last: true, num_workers: 4, pin_memory: true}
   val:
   - dataset:

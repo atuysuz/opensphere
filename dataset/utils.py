@@ -10,7 +10,7 @@ from scipy.interpolate import interp1d
 import torchvision.transforms as T
 
 
-def image_pipeline(info, test_mode):
+def image_pipeline(info, test_mode, augment):
     path = info['path']
     #image_raw = Image.open(path)
 
@@ -49,11 +49,17 @@ def image_pipeline(info, test_mode):
     #             break
 
     if not test_mode:
-        album_transform = A.Compose([A.Resize(112, 112),
-                                     A.RandomBrightnessContrast(brightness_limit=0.6, contrast_limit=0.6, p=0.5),
-                                     A.CoarseDropout(max_holes=8, max_height=8, max_width=8, min_holes=None,
-                                                     min_height=None, min_width=None, fill_value=0, always_apply=False,
-                                                     p=0.5)])
+        if augment:
+            album_transform = A.Compose([A.Resize(112, 112),
+                                         A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=0.5),
+                                         A.CoarseDropout(max_holes=8, max_height=8, max_width=8, min_holes=None,
+                                                         min_height=None, min_width=None, fill_value=0, always_apply=False,
+                                                         p=0.5)])
+        else:
+            album_transform = A.Compose([A.Resize(112, 112),
+                                         A.CoarseDropout(max_holes=8, max_height=8, max_width=8, min_holes=None,
+                                                         min_height=None, min_width=None, fill_value=0, always_apply=False,
+                                                         p=0.5)])
     else:
         album_transform = A.Compose([A.Resize(112, 112)])
 
