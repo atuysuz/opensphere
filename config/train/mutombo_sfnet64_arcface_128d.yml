@@ -53,7 +53,7 @@ model:
     net:
       type: sfnet64
       in_channel: 3
-      channels: [64, 128, 128, 128]
+      channels: [16, 32, 64, 128]
       out_channel: 128
   head:
     net:

@@ -66,13 +66,14 @@ def image_pipeline(info, test_mode, augment):
     # Convert from PIL to numpy:
     image = album_transform(image=np.array(image))["image"]
 
-    # This is need to deal to convert the numpy array to Pytorch tensor where channel is first:
+    # This is needed to deal to convert the numpy array to Pytorch tensor where channel is first:
     image = np.transpose(image, (2, 0, 1)).astype(np.float32)
 
     # normalize to [-1, 1]
     image = ((image - 127.5) / 127.5)
     #image = (image - image.min(axis=(0, 1))) / (image.max(axis=(0, 1)) - image.min(axis=(0, 1)))
     #image = (image*2)-1
+
 
     if not test_mode and random.random() > 0.5:
         image = np.flip(image, axis=2).copy()
