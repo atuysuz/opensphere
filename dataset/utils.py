@@ -52,6 +52,10 @@ def image_pipeline(info, test_mode, augment):
         if augment:
             album_transform = A.Compose([A.Resize(112, 112),
                                          A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=0.5),
+                                         A.GaussianBlur(blur_limit=(3, 7), always_apply=False, p=0.5),
+                                         A.AdvancedBlur(blur_limit=(3, 7), rotate_limit=90,
+                                                        beta_limit=(0.5, 8), noise_limit=(0.9, 1.1),
+                                                        always_apply=True, p=0.5),
                                          A.CoarseDropout(max_holes=8, max_height=8, max_width=8, min_holes=None,
                                                          min_height=None, min_width=None, fill_value=0, always_apply=False,
                                                          p=0.5)])
