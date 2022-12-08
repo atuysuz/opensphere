@@ -4,6 +4,7 @@ from .sfnet_deprecated import sfnet4_deprecated, sfnet10_deprecated
 from .sfnet_deprecated import sfnet20_deprecated, sfnet36_deprecated
 from .sfnet_deprecated import sfnet64_deprecated
 from .inception_v1 import InceptionResnetV1
+from .openface import OpenFaceClassifier
 
 
 __all__ = [

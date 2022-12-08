@@ -26,6 +26,6 @@ class CosFace(nn.Module):
             d_theta.scatter_(1, y.view(-1, 1), -self.m, reduce='add')
 
         logits = self.s * (cos_theta + d_theta)
-        loss = F.cross_entropy(logits, y)
+        loss = F.cross_entropy(logits, y, label_smoothing=0.1)
 
         return loss
