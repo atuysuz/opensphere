@@ -1,7 +1,7 @@
 import random
 import os.path as osp
 import numpy as np
-
+import collections
 from .utils import image_pipeline
 from torch.utils.data import Dataset
 import torch
@@ -58,7 +58,8 @@ class ClassDataset(Dataset):
         self.classes = names
 
         # Count the frequency of each class:
-        freq = [self.data_label_list.count(item) for item in names]
+        class_counts = collections.Counter(self.data_label_list)
+        freq = [class_counts[item] for item in names]
         self.class_freq = torch.tensor(freq)
         print('Done with frequencies')
 
