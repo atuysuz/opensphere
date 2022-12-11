@@ -60,3 +60,4 @@ model:
       type: ArcFace
       m: 0.5
       s: 64
+      balanced: true

@@ -6,12 +6,14 @@ import torch.nn.functional as F
 class ArcFace(nn.Module):
     """ reference: <Additive Angular Margin Loss for Deep Face Recognition>
     """
-    def __init__(self, feat_dim, num_class, s=64., m=0.5):
+    def __init__(self, feat_dim, num_class, s=64., m=0.5, balanced=False, class_freq=None):
         super(ArcFace, self).__init__()
         self.feat_dim = feat_dim
         self.num_class = num_class
         self.s = s
         self.m = m
+        self.balanced = balanced
+        self.class_freq = class_freq
         self.w = nn.Parameter(torch.Tensor(feat_dim, num_class))
         nn.init.xavier_normal_(self.w)
 
@@ -27,6 +29,12 @@ class ArcFace(nn.Module):
             d_theta = torch.cos(theta_m) - cos_theta
 
         logits = self.s * (cos_theta + d_theta)
+
+        if self.balanced:
+            spc = self.class_freq.type_as(logits)
+            spc = spc.unsqueeze(0).expand(logits.shape[0], -1)
+            logits = logits + spc.log()
+
         loss = F.cross_entropy(logits, y, label_smoothing=0.1)
 
         return loss

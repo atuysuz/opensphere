@@ -60,3 +60,4 @@ model:
       type: CurricularFace
       m: 0.5
       s: 64
+      balanced: true

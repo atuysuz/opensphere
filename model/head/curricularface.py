@@ -17,12 +17,14 @@ def l2_norm(input, axis=1):
 
 
 class CurricularFace(nn.Module):
-    def __init__(self, feat_dim, num_class, m=0.5, s=64.):
+    def __init__(self, feat_dim, num_class, m=0.5, s=64, balanced=False, class_freq=None):
         super(CurricularFace, self).__init__()
         self.in_features = feat_dim
         self.out_features = num_class
         self.m = m
         self.s = s
+        self.balanced = balanced
+        self.class_freq = class_freq
         self.cos_m = math.cos(m)
         self.sin_m = math.sin(m)
         self.threshold = math.cos(math.pi - m)
@@ -52,8 +54,13 @@ class CurricularFace(nn.Module):
 
         cos_theta[mask] = hard_example * (self.t + hard_example)
         cos_theta.scatter_(1, label.view(-1, 1).long(), final_target_logit)
-        output = cos_theta * self.s
+        logits = cos_theta * self.s
 
-        loss = F.cross_entropy(output, label, label_smoothing=0.1)
+        if self.balanced:
+            spc = self.class_freq.type_as(logits)
+            spc = spc.unsqueeze(0).expand(logits.shape[0], -1)
+            logits = logits + spc.log()
+
+        loss = F.cross_entropy(logits, label, label_smoothing=0.1)
 
         return loss

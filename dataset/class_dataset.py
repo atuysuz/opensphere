@@ -56,6 +56,10 @@ class ClassDataset(Dataset):
         names = sorted(list(names))
         self.classes = names
 
+        # Count the frequency of each class:
+        freq = [self.data_label_list.count(item) for item in names]
+        self.class_freq = freq
+
         name2label = {name: idx for idx, name in enumerate(names)}
 
         self.label_items_list = []

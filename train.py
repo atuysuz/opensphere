@@ -46,6 +46,8 @@ def main_worker(rank, world_size, config):
     config['model']['head']['net']['feat_dim'] = feat_dim
     num_class = len(train_loader.dataset.classes)
     config['model']['head']['net']['num_class'] = num_class
+    config['model']['head']['net']['class_freq'] = train_loader.dataset.class_freq
+
     model = build_model(config['model'])
     if rank == 0:
         print(model)
