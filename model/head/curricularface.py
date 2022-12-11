@@ -57,8 +57,7 @@ class CurricularFace(nn.Module):
         logits = cos_theta * self.s
 
         if self.balanced:
-            spc = self.class_freq.type_as(logits)
-            spc = spc.unsqueeze(0).expand(logits.shape[0], -1)
+            spc = self.class_freq.unsqueeze(0).expand(logits.shape[0], -1)
             logits = logits + spc.log()
 
         loss = F.cross_entropy(logits, label, label_smoothing=0.1)
