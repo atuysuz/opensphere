@@ -4,6 +4,7 @@ import numpy as np
 
 from .utils import image_pipeline
 from torch.utils.data import Dataset
+import torch
 
 
 class ClassDataset(Dataset):
@@ -58,7 +59,8 @@ class ClassDataset(Dataset):
 
         # Count the frequency of each class:
         freq = [self.data_label_list.count(item) for item in names]
-        self.class_freq = freq
+        self.class_freq = torch.tensor(freq)
+        print('Done with frequencies')
 
         name2label = {name: idx for idx, name in enumerate(names)}
 
