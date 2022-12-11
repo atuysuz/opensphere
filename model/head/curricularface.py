@@ -24,12 +24,12 @@ class CurricularFace(nn.Module):
         self.m = m
         self.s = s
         self.balanced = balanced
-        self.class_freq = class_freq
         self.cos_m = math.cos(m)
         self.sin_m = math.sin(m)
         self.threshold = math.cos(math.pi - m)
         self.mm = math.sin(math.pi - m) * m
         self.w = Parameter(torch.Tensor(feat_dim, num_class))
+        self.class_freq = class_freq.type_as(self.w)
         self.register_buffer('t', torch.zeros(1))
         nn.init.normal_(self.w, std=0.01)
 

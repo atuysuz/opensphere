@@ -13,7 +13,7 @@ class ArcFace(nn.Module):
         self.s = s
         self.m = m
         self.balanced = balanced
-        self.class_freq = class_freq
+        self.class_freq = class_freq.type_as(self.w)
         self.w = nn.Parameter(torch.Tensor(feat_dim, num_class))
         nn.init.xavier_normal_(self.w)
 

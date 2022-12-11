@@ -59,7 +59,7 @@ class ClassDataset(Dataset):
 
         # Count the frequency of each class:
         class_counts = collections.Counter(self.data_label_list)
-        freq = torch.tensor([class_counts[item] for item in names]).type_as(float)
+        freq = torch.tensor([class_counts[item] for item in names])
         self.class_freq = freq
         print('Done with frequencies')
 
