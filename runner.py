@@ -24,7 +24,7 @@ class IterRunner():
         self.train_loader = IterLoader(train_loader)
         self.val_loaders = val_loaders
         self.model = model
-        self.class_freq = config['model']['head']['net']['class_freq']
+        self.class_freq = train_loader.dataset.class_freq
         self.rank = get_rank()
         self.world_size = get_world_size()
 
