@@ -24,6 +24,7 @@ class IterRunner():
         self.train_loader = IterLoader(train_loader)
         self.val_loaders = val_loaders
         self.model = model
+        self.class_freq = config['model']['head']['net']['class_freq']
         self.rank = get_rank()
         self.world_size = get_world_size()
 
@@ -116,11 +117,12 @@ class IterRunner():
     def train(self):
         data, labels = next(self.train_loader)
         data, labels = data.to(self.rank), labels.to(self.rank)
+        class_freq = self.class_freq.to(self.rank)
 
         # forward
         self.set_model(test_mode=False)
         feats = self.model['backbone']['net'](data)
-        loss = self.model['head']['net'](feats, labels)
+        loss = self.model['head']['net'](feats, labels, class_freq)
         
         # backward
         loss.backward()

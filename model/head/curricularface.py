@@ -15,9 +15,8 @@ def l2_norm(input, axis=1):
 
     return output
 
-
 class CurricularFace(nn.Module):
-    def __init__(self, feat_dim, num_class, m=0.5, s=64, balanced=False, class_freq=None):
+    def __init__(self, feat_dim, num_class, m=0.5, s=64, balanced=False):
         super(CurricularFace, self).__init__()
         self.in_features = feat_dim
         self.out_features = num_class
@@ -29,11 +28,10 @@ class CurricularFace(nn.Module):
         self.threshold = math.cos(math.pi - m)
         self.mm = math.sin(math.pi - m) * m
         self.w = Parameter(torch.Tensor(feat_dim, num_class))
-        self.class_freq = class_freq.type_as(self.w)
         self.register_buffer('t', torch.zeros(1))
         nn.init.normal_(self.w, std=0.01)
 
-    def forward(self, embbedings, label):
+    def forward(self, embbedings, label, class_freq):
 
         with torch.no_grad():
             self.w.data = F.normalize(self.w.data, dim=0)
@@ -57,7 +55,8 @@ class CurricularFace(nn.Module):
         logits = cos_theta * self.s
 
         if self.balanced:
-            spc = self.class_freq.unsqueeze(0).expand(logits.shape[0], -1)
+            class_freq = class_freq.type_as(logits)
+            spc = class_freq.unsqueeze(0).expand(logits.shape[0], -1)
             logits = logits + spc.log()
 
         loss = F.cross_entropy(logits, label, label_smoothing=0.1)
